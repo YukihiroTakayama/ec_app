@@ -1,0 +1,18 @@
+name: CI
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Shutdown MySQL
+      run: sudo service mysql stop
+    - name: Start up docker-compose
+      run: sh start_up.sh
+    - name: Run rubocop
+      run: docker-compose exec -T web bundle exec rubocop
+    - name: Run rspec
+      run: docker-compose exec -T web bundle exec rspec
